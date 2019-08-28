@@ -19,7 +19,7 @@ HeadPoseEstimator::HeadPoseEstimator(ros::NodeHandle& rosNode,
             estimator(modelFilename)
 
 {
-    sub = it.subscribeCamera("rgb", 1, &HeadPoseEstimator::detectFaces, this);
+    sub = it.subscribeCamera("rgb", 10, &HeadPoseEstimator::detectFaces, this);
 
     nb_detected_faces_pub = rosNode.advertise<std_msgs::Char>("gazr/detected_faces/count", 1);
     face_poses_pub = rosNode.advertise<geometry_msgs::PoseArray>("gazr/detected_faces/poses", 1);
