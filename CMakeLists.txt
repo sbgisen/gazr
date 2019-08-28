@@ -8,7 +8,8 @@ set(VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPAC
 
 add_definitions(-std=c++11 -DGAZR_VERSION=${VERSION})
 
-find_package(dlib REQUIRED)
+add_subdirectory(dlib)
+
 include_directories(${dlib_INCLUDE_DIRS})
 
 option(DEBUG_OUTPUT "Enable debug visualizations" OFF)
@@ -59,7 +60,7 @@ endif()
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_library(gazr SHARED src/head_pose_estimation.cpp)
-target_link_libraries(gazr ${dlib_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(gazr dlib::dlib ${OpenCV_LIBRARIES})
 
 if(WITH_ROS)
 

@@ -49,8 +49,10 @@ support for other operating systems!
 ### Pre-requisites
 
 You need to [download](http://dlib.net/) and extract ``Dlib`` somewhere. This
-application requires ``dlib >= 18.18``. On Ubuntu 16.04 and above, `sudo
-apt-get install libdlib-dev`
+application requires ``dlib >= 18.18``.
+
+Download a current version of dlib and extract it into a new subfolder "dlib".
+The build will automatically pick it up there and link it (statically) into the resulting project.
 
 You also need OpenCV. On Ubuntu, `sudo apt-get install libopencv-dev`.
 
