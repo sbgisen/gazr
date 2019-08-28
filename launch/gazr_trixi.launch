@@ -1,0 +1,20 @@
+<launch>
+
+  <arg name="quality"     default="qhd"/>
+  <arg name="rgb"         default="/kinect2/$(arg quality)/image_color" doc="Topic of the RGB video stream" />
+  <arg name="camera_info" default="/kinect2/$(arg quality)/camera_info" doc="Topic of the camera_info" />
+  <arg name="depth"       default="/kinect2/$(arg quality)/image_depth_rect" doc="If with_depth=True, topic of the depth stream. *Must be registered with the RGB stream!*" />
+  <arg name="with_depth"  default="false" doc="If true, uses the depth video stream to compute 3D facial features" />
+  <arg name="face_prefix" default="face" doc="Prefix of TF frames published for each detected face" />
+
+    <group>
+        <node pkg="gazr" type="estimate" name="gazr" output="screen" required="true" >
+            <param name="face_model" value="$(find gazr)/share/shape_predictor_68_face_landmarks.dat" />
+            <param name="prefix" value="$(arg face_prefix)" />
+            <param name="with_depth" value="$(arg with_depth)" />
+            <remap from="rgb" to="$(arg rgb)"/>
+            <remap from="camera_info" to="$(arg camera_info)" />
+            <remap from="depth" to="$(arg depth)" />
+        </node>
+    </group>
+</launch>
