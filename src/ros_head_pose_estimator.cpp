@@ -22,6 +22,7 @@ HeadPoseEstimator::HeadPoseEstimator(ros::NodeHandle& rosNode,
     sub = it.subscribeCamera("rgb", 1, &HeadPoseEstimator::detectFaces, this);
 
     nb_detected_faces_pub = rosNode.advertise<std_msgs::Char>("gazr/detected_faces/count", 1);
+    face_poses_pub = rosNode.advertise<geometry_msgs::PoseArray>("gazr/detected_faces/poses", 1);
 
 #ifdef HEAD_POSE_ESTIMATION_DEBUG
     pub = it.advertise("gazr/detected_faces/image",1);
@@ -55,24 +56,20 @@ void HeadPoseEstimator::detectFaces(const sensor_msgs::ImageConstPtr& rgb_msg,
     auto all_features = estimator.update(rgb);
 
     auto poses = estimator.poses();
-#ifdef HEAD_POSE_ESTIMATION_DEBUG
-    ROS_INFO_STREAM(poses.size() << " faces detected.");
-#endif
 
     std_msgs::Char nb_faces;
     nb_faces.data = poses.size();
 
     nb_detected_faces_pub.publish(nb_faces);
 
+    geometry_msgs::PoseArray ros_poses;
+    ros_poses.header = camerainfo->header;
+    ros_poses.poses.resize(poses.size());
+
     for(size_t face_idx = 0; face_idx < poses.size(); ++face_idx) {
 
         auto trans = poses[face_idx];
 
-        tf::Transform face_pose;
-
-        face_pose.setOrigin( tf::Vector3( trans(0,3),
-                                          trans(1,3),
-                                          trans(2,3)) );
 
         tf::Quaternion qrot;
         tf::Matrix3x3 mrot(
@@ -80,29 +77,32 @@ void HeadPoseEstimator::detectFaces(const sensor_msgs::ImageConstPtr& rgb_msg,
                 trans(1,0), trans(1,1), trans(1,2),
                 trans(2,0), trans(2,1), trans(2,2));
         mrot.getRotation(qrot);
-        face_pose.setRotation(qrot);
 
+#if(false) // TAMS modification: do not pollute TF. Maybe optional at some point -- v4hn@20190820
+        tf::Transform face_pose;
+        face_pose.setOrigin( tf::Vector3( trans(0,3),
+                                          trans(1,3),
+                                          trans(2,3)) );
+        face_pose.setRotation(qrot);
         tf::StampedTransform transform(face_pose, 
                 rgb_msg->header.stamp,  // publish the transform with the same timestamp as the frame originally used
                 cameramodel.tfFrame(),
                 facePrefix + "_" + to_string(face_idx));
         br.sendTransform(transform);
+#endif
 
-//    tf::TransformListener tf;
-//    tf.waitForTransform("face_0", "head_tracking_camera", ros::Time(), ros::Duration(1.0));
-//    tf::StampedTransform echo_transform;
-//    tf.lookupTransform("face_0", "head_tracking_camera", ros::Time(), echo_transform);
+        ros_poses.poses[face_idx].position.x= trans(0,3);
+        ros_poses.poses[face_idx].position.y= trans(1,3);
+        ros_poses.poses[face_idx].position.z= trans(2,3);
 
-//        // Code to compute yaw-picth-roll
-//        double yaw, pitch, roll;
-//        transform.getBasis().getRPY(roll, pitch, yaw);
-//        minp = max(minp, abs(pitch));
-//        minr = max(minr, abs(roll));
-//        miny = max(miny, abs(yaw));
-//        ROS_DEBUG_STREAM("Rotation in RPY (degree) [" <<  roll*180.0/M_PI << ", " << pitch*180.0/M_PI << ", " << yaw*180.0/M_PI << "]" << std::endl);
-//        ROS_DEBUG_STREAM("Max Rotation in RPY (degree) [" <<  minr*180.0/M_PI << ", " << minp*180.0/M_PI << ", " << miny*180.0/M_PI << "]" << std::endl);
-//
+        ros_poses.poses[face_idx].orientation.x= qrot.x();
+        ros_poses.poses[face_idx].orientation.y= qrot.y();
+        ros_poses.poses[face_idx].orientation.z= qrot.z();
+        ros_poses.poses[face_idx].orientation.w= qrot.w();
+
     }
+
+    face_poses_pub.publish(ros_poses);
 
 #ifdef HEAD_POSE_ESTIMATION_DEBUG
     if(pub.getNumSubscribers() > 0) {

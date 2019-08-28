@@ -12,7 +12,7 @@ add_subdirectory(dlib)
 
 include_directories(${dlib_INCLUDE_DIRS})
 
-option(DEBUG_OUTPUT "Enable debug visualizations" OFF)
+option(DEBUG_OUTPUT "Enable debug visualizations" ON)
 option(WITH_TOOLS "Compile sample tools" OFF)
 option(WITH_ROS "Build ROS nodes" ON)
 
