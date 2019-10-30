@@ -8,4 +8,9 @@
     <arg name="launch" value="gazr.launch" />
     <arg name="args" value="quality:=$(arg quality)" />
   </include>
+
+  <include file="$(find trixi_look)/launch/look.launch">
+    <arg name="mode" value="gazr" />
+    <arg name="velocity" value="0.2" />
+  </include>
 </launch>
