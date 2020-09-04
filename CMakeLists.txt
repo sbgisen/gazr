@@ -8,9 +8,7 @@ set(VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPAC
 
 add_definitions(-std=c++11 -DGAZR_VERSION=${VERSION})
 
-add_subdirectory(dlib)
-
-include_directories(${dlib_INCLUDE_DIRS})
+find_package(dlib REQUIRED)
 
 option(DEBUG_OUTPUT "Enable debug visualizations" ON)
 option(WITH_TOOLS "Compile sample tools" OFF)
@@ -67,7 +65,7 @@ if(WITH_ROS)
     add_executable(estimate_focus src/estimate_focus.cpp)
     target_link_libraries(estimate_focus ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
-    add_executable(estimate src/main.cpp src/ros_head_pose_estimator.cpp src/facialfeaturescloud.cpp)
+	add_executable(estimate src/main.cpp src/ros_head_pose_estimator.cpp src/facialfeaturescloud.cpp)
     target_link_libraries(estimate gazr ${catkin_LIBRARIES})
 
     install(TARGETS estimate_focus gazr estimate

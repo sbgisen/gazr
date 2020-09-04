@@ -19,7 +19,7 @@ HeadPoseEstimator::HeadPoseEstimator(ros::NodeHandle& rosNode,
             estimator(modelFilename)
 
 {
-    sub = it.subscribeCamera("rgb", 10, &HeadPoseEstimator::detectFaces, this);
+    sub = it.subscribeCamera("rgb", 1, &HeadPoseEstimator::detectFaces, this);
 
     nb_detected_faces_pub = rosNode.advertise<std_msgs::Char>("gazr/detected_faces/count", 1);
     face_poses_pub = rosNode.advertise<geometry_msgs::PoseArray>("gazr/detected_faces/poses", 1);
@@ -32,7 +32,7 @@ HeadPoseEstimator::HeadPoseEstimator(ros::NodeHandle& rosNode,
 void HeadPoseEstimator::detectFaces(const sensor_msgs::ImageConstPtr& rgb_msg, 
                                     const sensor_msgs::CameraInfoConstPtr& camerainfo)
 {
-    ROS_INFO_ONCE("First RGB image received");
+    ROS_INFO_ONCE("First RGB image received .");
 
     // updating the camera model is cheap if not modified
     cameramodel.fromCameraInfo(camerainfo);
@@ -49,7 +49,7 @@ void HeadPoseEstimator::detectFaces(const sensor_msgs::ImageConstPtr& rgb_msg,
     // got an empty image!
     if (rgb.size().area() == 0) return;
 
-	ROS_INFO_ONCE("test---test");
+	//ROS_INFO_ONCE("test---test");
 
     /********************************************************************
     *                      Faces detection                           *
@@ -59,10 +59,14 @@ void HeadPoseEstimator::detectFaces(const sensor_msgs::ImageConstPtr& rgb_msg,
 
     auto poses = estimator.poses();
 
+	ROS_INFO_ONCE("First RGB image received ..");
+								
     std_msgs::Char nb_faces;
     nb_faces.data = poses.size();
 
     nb_detected_faces_pub.publish(nb_faces);
+
+	cout << "nb_faces " << nb_faces << endl;
 
     geometry_msgs::PoseArray ros_poses;
     ros_poses.header = camerainfo->header;

@@ -1,5 +1,5 @@
 <launch>
-  <arg name="quality"     default="qhd"/>
+  <arg name="quality"     default="sd"/>
   <arg name="rgb"         default="/kinect2/$(arg quality)/image_color" doc="Topic of the RGB video stream" />
   <arg name="camera_info" default="/kinect2/$(arg quality)/camera_info" doc="Topic of the camera_info" />
   <arg name="depth"       default="/kinect2/$(arg quality)/image_depth_rect" doc="If with_depth=True, topic of the depth stream. *Must be registered with the RGB stream!*" />
