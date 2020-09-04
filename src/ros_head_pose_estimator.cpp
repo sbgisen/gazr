@@ -49,6 +49,8 @@ void HeadPoseEstimator::detectFaces(const sensor_msgs::ImageConstPtr& rgb_msg,
     // got an empty image!
     if (rgb.size().area() == 0) return;
 
+	ROS_INFO_ONCE("test---test");
+
     /********************************************************************
     *                      Faces detection                           *
     ********************************************************************/
