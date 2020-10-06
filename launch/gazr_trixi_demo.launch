@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="quality"     default="qhd" />
+
+    <include file="$(find gazr)/launch/gazr_trixi.launch">
+        <arg name="quality" value="$(arg quality)" />
+    </include>
+
+    <include file="$(find trixi_look)/launch/look.launch">
+        <arg name="mode" value="gazr" />
+    </include>
+</launch>

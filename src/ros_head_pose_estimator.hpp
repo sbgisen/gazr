@@ -11,6 +11,7 @@
 #include <std_msgs/Char.h>
 #include <tf/transform_broadcaster.h>
 #include <image_transport/image_transport.h>
+#include <geometry_msgs/PoseArray.h>
 
 #include <image_geometry/pinhole_camera_model.h>
 
@@ -33,6 +34,7 @@ private:
     image_transport::Publisher pub;
 
     ros::Publisher nb_detected_faces_pub;
+    ros::Publisher face_poses_pub;
 
     tf::TransformBroadcaster br;
     tf::Transform transform;

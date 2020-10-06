@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="quality" default="hd" />
+
+  <include file="$(find tams_pr2_bringup)/launch/remote.launch">
+    <arg name="machine" value="pr2-head" />
+    <arg name="pkg" value="gazr" />
+    <arg name="launch" value="gazr.launch" />
+    <arg name="args" value="quality:=$(arg quality)" />
+  </include>
+
+  <include file="$(find trixi_look)/launch/look.launch">
+    <arg name="mode" value="gazr" />
+    <arg name="velocity" value="0.2" />
+  </include>
+</launch>
